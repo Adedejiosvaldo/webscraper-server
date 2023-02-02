@@ -11,7 +11,6 @@ app.get("/api/jumia", async (req, res) => {
   const scrapedJumiaCourses = await scraper.jumiaData.catch((err) => {
     console.error("err:", err);
   });
-
   if (!scrapedJumiaCourses) res.status(400).send("Error From Your End");
   res.send(scrapedJumiaCourses);
 });

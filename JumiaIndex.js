@@ -4,7 +4,7 @@ const scrapeJumia = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page
-    .goto("https://www.jumia.com")
+    .goto("https://www.jumia.com", { waitUntil: "networkidle0" })
     .catch((error) => console.log("Error:", error));
 
   const categories = await page.$$eval(".crs .itm.-pvs._v", (elements) =>
