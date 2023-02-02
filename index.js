@@ -1,3 +1,4 @@
+const puppeteer = require("puppeteer");
 const express = require("express");
 const scraper = require("./JumiaIndex");
 const app = express();
@@ -9,11 +10,26 @@ app.get("/", (req, res) => {
 
 app.get("/api/jumia", async (req, res) => {
   try {
-    const scrapedJumiaCourses = await scraper.jumiaData();
-    res.send(scrapedJumiaCourses);
-    console.log(scrapedJumiaCourses);
+    const jumiaData = async () => {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto("https://www.jumia.com", { waitUntil: "networkidle0" });
+
+      const categories = await page.$$eval(".crs .itm.-pvs._v", (elements) =>
+        elements.map((e) => ({
+          title: e.querySelector("p.-maxs.-fs14.-elli2").innerText,
+          URL: e.querySelector("a.-fw.-rad4.-hov-e-2").href,
+          imageURL: e.querySelector("img.-rad4").getAttribute("data-src"),
+        }))
+      );
+
+      await browser.close();
+      return categories;
+    };
+    const data = await jumiaData();
+    res.send(data);
   } catch (error) {
-    throw error;
+    res.send(error);
   }
 
   //   const scrapedJumiaCourses = new Promise((resolve, reject) => {
