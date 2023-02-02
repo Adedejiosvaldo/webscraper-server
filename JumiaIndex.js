@@ -19,4 +19,4 @@ const scrapeJumia = async () => {
   return categories;
 };
 
-module.exports.jumiaData = scrapeJumia();
+module.exports.jumiaData = scrapeJumia;
