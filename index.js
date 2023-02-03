@@ -11,10 +11,12 @@ app.get("/", (req, res) => {
 app.get("/api/jumia", async (req, res) => {
   try {
     const jumiaData = async () => {
+      console.log("Launching");
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.goto("https://www.jumia.com", { waitUntil: "networkidle0" });
+      await page.goto("https://www.jumia.com");
 
+      console.log("Function");
       const categories = await page.$$eval(".crs .itm.-pvs._v", (elements) =>
         elements.map((e) => ({
           title: e.querySelector("p.-maxs.-fs14.-elli2").innerText,
@@ -22,35 +24,24 @@ app.get("/api/jumia", async (req, res) => {
           imageURL: e.querySelector("img.-rad4").getAttribute("data-src"),
         }))
       );
-
+      //   console.log(categories);
+      //   console.log("Returning");
+      console.debug("Returning");
       await browser.close();
       return categories;
     };
+    console.log("callFunction 2");
     const data = await jumiaData();
     res.send(data);
+    // console.log(data);
   } catch (error) {
-    res.send(error);
-  }
+    console.debug("ErrorFound");
 
-  //   const scrapedJumiaCourses = new Promise((resolve, reject) => {
-  //     scraper
-  //       .jumiaData()
-  //       .then((data) => resolve(data))
-  //       .catch((err) => reject("Jumia Scraping Failed"));
-  //   });
-  //   console.log(scrapedJumiaCourses);
-  //   Promise.all([scrapedJumiaCourses])
-  //     .then((data) => {
-  //       console.log("Then");
-  //       console.log(data);
-  //       res.send(data);
-  //     })
-  //     .catch((err) => {
-  //       console.log("Catch");
-  //       res.status(500).send(err);
-  //     });
+    res.status(400).send(error);
+    console.log(error);
+  }
 });
 
 app.listen(PORT, () => {
-  //   console.log("Port");
+  console.log("Port");
 });
