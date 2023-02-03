@@ -9,6 +9,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/jumia", async (req, res) => {
+  console.debug("IT begins");
   try {
     const jumiaData = async () => {
       console.log("Launching");
