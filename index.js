@@ -1,11 +1,11 @@
 const puppeteer = require("puppeteer");
 const express = require("express");
-const scraper = require("./JumiaIndex");
+const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors());
 const jumiaData = async () => {
-  console.log("Launching");
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://www.jumia.com");
@@ -31,16 +31,13 @@ app.get("/", (req, res) => {
 
 app.get("/api/jumia", async (req, res) => {
   console.debug("IT begins");
-
   try {
     console.log("callFunction 2");
     const data = await jumiaData();
     res.send(data);
-    // console.log(data);
   } catch (error) {
     console.debug("ErrorFound");
-
-    res.status(400).send(error);
+    res.status(400).send("error");
     console.log(error);
   }
 });
