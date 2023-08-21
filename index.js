@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 
 app.use("/api/v1/products", jumiaRoute);
-app.use(express.json)();
 
 app.get("/", (req, res) => {
   res.json({ msg: "success", location: "Homepage" });
