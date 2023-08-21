@@ -14,7 +14,7 @@ const getAllProducts = async (req, res) => {
       }))
   );
   await browser.close();
-  res.status(200).json({ numHit: categories.length, data: categories });
+  await res.status(200).json({ numHit: categories.length, data: categories });
 };
 
 module.exports = { getAllProducts };
