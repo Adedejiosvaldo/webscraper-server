@@ -7,7 +7,7 @@ const executeCronJob = () => {
 
   if (RUN_CRON_JOB) {
     // Schedule the job to run every 5 minutes
-    cron.schedule("5 * * * *", async () => {
+    cron.schedule("0 0 * * *", async () => {
       try {
         console.log("Running the task at 12-AM.");
         const scrappedData = await createDataIntoModel(); // Replace with the actual code to create data in your model
