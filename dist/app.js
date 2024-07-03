@@ -25,7 +25,17 @@ const cronjob_1 = require("./utils/cronjob");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
-(() => (0, cronjob_1.executeCronJob)())();
+(() => {
+    console.log("Attempting to execute cron job...");
+    try {
+        (0, cronjob_1.executeCronJob)();
+        console.log("Cron job executed successfully.");
+    }
+    catch (error) {
+        console.error("Error executing cron job:", error);
+    }
+})();
+// (() => executeCronJob())();
 app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json({ limit: "5mb" }));

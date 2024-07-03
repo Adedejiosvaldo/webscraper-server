@@ -12,7 +12,16 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-(() => executeCronJob())();
+(() => {
+  console.log("Attempting to execute cron job...");
+  try {
+    executeCronJob();
+    console.log("Cron job executed successfully.");
+  } catch (error) {
+    console.error("Error executing cron job:", error);
+  }
+})();
+// (() => executeCronJob())();
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));

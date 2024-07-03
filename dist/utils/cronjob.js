@@ -21,7 +21,7 @@ const executeCronJob = () => {
     const RUN_CRON_JOB = true; // This could be dynamically set based on some external configuration
     if (RUN_CRON_JOB) {
         // Schedule the job to run every 5 minutes
-        node_cron_1.default.schedule("0 0 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
+        node_cron_1.default.schedule("* * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 console.log("Running the task at 12-AM.");
                 const scrappedData = yield (0, jumia_1.createDataIntoModel)(); // Replace with the actual code to create data in your model
