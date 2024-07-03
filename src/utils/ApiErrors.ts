@@ -1,5 +1,8 @@
 class APIErrors extends Error {
-  constructor(message, statusCode) {
+  statusCode: number;
+  status: string;
+  operational: boolean;
+  constructor(message: any, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith("4") ? "Fail" : "Error";

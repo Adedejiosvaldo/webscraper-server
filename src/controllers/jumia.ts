@@ -1,9 +1,8 @@
-const puppeteer = require("puppeteer");
-const Jumia = require("../model/Jumia");
-const cron = require("node-cron");
-const { getAll } = require("./handlerFactory");
-
-const createDataIntoModel = async (req, res) => {
+import { Response, Request } from "express";
+import puppeteer from "puppeteer";
+import Jumia from "../model/Jumia";
+import { getAll } from "./handlerFactory";
+const createDataIntoModel = async () => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -11,7 +10,7 @@ const createDataIntoModel = async (req, res) => {
 
     const categories = await page.$$eval(
       ".col16.-pvs .card.-oh._fw.-rad4  .crs-w._main.-phxs .crs.row._no-g.-fw-nw._6cl-4cm.-pvxs .itm.col",
-      (elements) =>
+      (elements: any[]) =>
         elements.map((e) => {
           const titleElement = e.querySelector(".prd._box._hvr .name");
           const stkElement = e.querySelector(".stk");
@@ -47,7 +46,26 @@ const createDataIntoModel = async (req, res) => {
   }
 };
 
-const getAllProducts = getAll(Jumia);
+const getAllProducts = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10; // Default limit to 10 items
+  const skip = (page - 1) * limit;
+
+  try {
+    const allData = await Jumia.find().skip(skip).limit(limit);
+    const total = await Jumia.countDocuments(); // Get total documents for pagination info
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      limit,
+      data: allData,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching products", error: error });
+  }
+};
 // const getAllProducts = async (req, res) => {
 //   const cat = await createDataIntoModel();
 //   console.log(typeof cat[0].price);
@@ -57,25 +75,26 @@ const getAllProducts = getAll(Jumia);
 
 // Schedule the job to run every 5 minutes
 
-cron.schedule("0 0 * * *", async () => {
-  try {
-    console.log("Running the task at 12-AM.");
-    const scrappedData = await createDataIntoModel(); // Replace with the actual code to create data in your model
-    await Jumia.create(scrappedData);
-    console.log("Successfully scrapped and upladed");
-  } catch (error) {
-    console.log(error);
-  }
-});
+// cron.schedule("0 0 * * *", async () => {
+//   try {
+//     console.log("Running the task at 12-AM.");
+//     const scrappedData = await createDataIntoModel(); // Replace with the actual code to create data in your model
+//     await Jumia.create(scrappedData);
+//     console.log("Successfully scrapped and upladed");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
-cron.schedule("55 23 * * *", async () => {
-  console.log("Deleting the existing data at 11:55pm everyday.");
-  // Replace with the actual code to create data in your model
-  try {
-    await Jumia.deleteMany();
-  } catch (error) {
-    console.log(error);
-  }
-});
+// cron.schedule("55 23 * * *", async () => {
+//   console.log("Deleting the existing data at 11:55pm everyday.");
+//   // Replace with the actual code to create data in your model
+//   try {
+//     await Jumia.deleteMany();
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
-module.exports = { getAllProducts };
+export { getAllProducts, createDataIntoModel };
+// module.exports = { getAllProducts, createDataIntoModel };
